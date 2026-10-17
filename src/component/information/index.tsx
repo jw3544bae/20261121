@@ -16,9 +16,9 @@ export const Information1 = () => {
       <div className="info-card">
         <div className="label">식사 안내</div>
         <div className="content">
-          식사시간: 12시 30분 ~ 14시 30분
+          식사시간: 12시 30분 ~ 16시 00분
           <br />
-          장소: 지하 1층 연회장
+          장소: 1층 연회장
         </div>
       </div>
     </>
@@ -35,14 +35,16 @@ export const Information2 = () => {
 
   return (
     <>
-      <div className="info-card">
+        <div className="info-card">
         <div className="label">마음 전하기</div>
         <div className="content">
-          참석이 어려워 직접 축하해주지 못하는
+          가족들과 작게 올리는 예식이라
           <br />
-          분들을 위해 계좌번호를 기재하였습니다.
+          축하해 주시는 따뜻한 마음만으로도 충분합니다.
           <br />
-          넓은 마음으로 양해 부탁드립니다.
+          다만, 축하의 뜻을 전하고 싶어 문의주시는
+          <br />
+          분들을 위해 조심스럽게 계좌번호를 남깁니다.
         </div>
 
         <div className="break" />

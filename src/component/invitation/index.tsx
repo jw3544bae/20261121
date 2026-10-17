@@ -33,22 +33,22 @@ export const Invitation = () => {
         <div className="break" />
 
         {/* 초대 문구 */}
-        <div className="content">싱그러운 여름 향기 가득한 날</div>
-        <div className="content">소중한 분들을 모시고</div>
-        <div className="content">사랑의 약속을 하려고 합니다.</div>
+        <div className="content">깊어가는 가을의 끝자락에서</div>
+        <div className="content">저희 두 사람이 새로운 시작을 함께하려 합니다.</div>
         <div className="break" />
-        <div className="content">햇살이 뜨거울 땐 가려주고,</div>
-        <div className="content">비가 오면 우산이 되어주는</div>
-        <div className="content">부부가 되겠습니다.</div>
+        <div className="content">예식은 양가 가족분들만 모시고</div>
+        <div className="content">작고 조용하게 진행하게 되었습니다.</div>
+        <div className="content">소중한 분들을 모두 모시지 못하는 점</div>
+        <div className="content">너그러운 마음으로 양해 부탁드립니다.</div>
         <div className="break" />
-        <div className="content">기쁜날 함께 하시어</div>
-        <div className="content">저희의 앞날을 축복해 주세요.</div>
+        <div className="content">멀리서나마 따뜻한 마음으로</div>
+        <div className="content">저희의 앞날을 축복해 주시면 감사하겠습니다.</div>
 
         <div className="break" />
 
         {/* 혼주 및 신랑 정보 */}
         <div className="name">
-          {GROOM_FATHER} · {GROOM_MOTHER}
+          {GROOM_MOTHER}
           <span className="relation">
             의 <span className="relation-name">{GROOM_TITLE}</span>
           </span>{" "}

@@ -14,8 +14,7 @@ export { dayjs }
  * 예식 일시 설정
  * Asia/Seoul 타임존 기준으로 설정합니다.
  */
-export const WEDDING_DATE = dayjs.tz("2024-08-24 13:00", "Asia/Seoul")
-
+export const WEDDING_DATE = dayjs.tz("2026-11-21 12:00", "Asia/Seoul")
 /**
  * 예식 일시 포맷
  * 분이 0이면 분을 생략하고, 그 외에는 표시합니다.
@@ -27,17 +26,13 @@ export const WEDDING_DATE_FORMAT = `YYYY년 MMMM D일 dddd A h시${WEDDING_DATE.
  * 예식 당월 휴무일 (달력 표시용)
  * 예: 8월 15일 광복절
  */
-export const HOLIDAYS = [15]
+export const HOLIDAYS = []
 
 /**
  * 예식 장소 명칭
  */
-export const LOCATION = "서울대학교 연구공원 웨딩홀"
-
-/**
- * 예식 장소 상세 주소
- */
-export const LOCATION_ADDRESS = "서울시 관악구 관악로 1, 연구공원 본관 1층"
+export const LOCATION = "라벨라 쿠치나"
+export const LOCATION_ADDRESS = "대구광역시 수성구 무학로 151 (지산동 1063-1)"
 
 /**
  * 카카오톡 공유 시 사용할 위치 정보 주소
@@ -53,26 +48,26 @@ export const SHARE_ADDRESS_TITLE = LOCATION
 /**
  * 지도 서비스(네이버, 카카오)에 사용할 좌표 [경도, 위도]
  */
-export const WEDDING_HALL_POSITION = [126.9594982, 37.4657134]
+export const WEDDING_HALL_POSITION = [128.62527430057526, 35.830385576631286]
 
 /**
  * 네이버 지도 장소 ID (NMAP_PLACE_ID)
  * 네이버 지도에서 장소 검색 후 URL의 숫자 부분을 입력합니다.
  */
-export const NMAP_PLACE_ID = 13321741
+export const NMAP_PLACE_ID = 16221823
 
 /**
  * 카카오 지도 장소 ID (KMAP_PLACE_ID)
  * 카카오 지도에서 장소 상세보기 클릭 후 URL의 숫자 부분을 입력합니다.
  */
-export const KMAP_PLACE_ID = 8634826
+export const KMAP_PLACE_ID = 7857943
 
 // 신부 정보 설정
-export const BRIDE_FULLNAME = "정지원"
-export const BRIDE_FIRSTNAME = "지원"
+export const BRIDE_FULLNAME = "이지현"
+export const BRIDE_FIRSTNAME = "지혀"
 export const BRIDE_TITLE = "장녀"
-export const BRIDE_FATHER = "정상원"
-export const BRIDE_MOTHER = "박윤정"
+export const BRIDE_FATHER = "이태동"
+export const BRIDE_MOTHER = "박순자"
 
 /**
  * 신부측 연락처 및 계좌 정보
@@ -81,29 +76,29 @@ export const BRIDE_INFO = [
   {
     relation: "신부",
     name: BRIDE_FULLNAME,
-    phone: "010-0000-0000",
-    account: "우리은행 0000000000000",
+    phone: "010-5775-6030",
+    account: "신한은행 100-436-341-306",
   },
   {
     relation: "신부 아버지",
     name: BRIDE_FATHER,
-    phone: "010-0000-0000",
-    account: "하나은행 00000000000",
+    phone: "010-3817-4280",
+    account: "Im뱅크(구. 대구은행 )010-08-046361-5",
   },
   {
     relation: "신부 어머니",
     name: BRIDE_MOTHER,
-    phone: "010-0000-0000",
-    account: "하나은행 00000000000000",
+    phone: "010-9365-6031",
+    account: "우체국 703942-06-006056",
   },
 ]
 
 // 신랑 정보 설정
-export const GROOM_FULLNAME = "남주호"
-export const GROOM_FIRSTNAME = "주호"
-export const GROOM_TITLE = "차남"
-export const GROOM_FATHER = "남현태"
-export const GROOM_MOTHER = "김현영"
+export const GROOM_FULLNAME = "배준우"
+export const GROOM_FIRSTNAME = "준우"
+export const GROOM_TITLE = "장남"
+export const GROOM_FATHER = ""
+export const GROOM_MOTHER = "김은정"
 
 /**
  * 신랑측 연락처 및 계좌 정보
@@ -112,19 +107,13 @@ export const GROOM_INFO = [
   {
     relation: "신랑",
     name: GROOM_FULLNAME,
-    phone: "010-0000-0000",
-    account: "하나은행 00000000000000",
-  },
-  {
-    relation: "신랑 아버지",
-    name: GROOM_FATHER,
-    phone: "010-0000-0000",
-    account: "신한은행 000000000000",
+    phone: "010-9033-7782",
+    account: "새마을금고 9003-2179-4218-6",
   },
   {
     relation: "신랑 어머니",
     name: GROOM_MOTHER,
-    phone: "010-0000-0000",
-    account: "국민은행 000000000000",
+    phone: "010-2032-1189",
+    account: "신협은행 1321-3821-2811",
   },
 ]
