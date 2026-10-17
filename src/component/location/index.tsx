@@ -35,7 +35,7 @@ export const Location = () => {
           <div className="content">
             * 지하철 이용시
             <br />
-            지하철 3호선 <b>수성못역 1번출구</b> 나와서
+            지하철 3호선 <b>수성못역 1번출구로</b> 나오셔서
             <br />
             속초식당 쪽으로 넘어오신 후
             <br />
