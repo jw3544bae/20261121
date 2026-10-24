@@ -6,7 +6,6 @@ import {
   BRIDE_MOTHER,
   GROOM_FULLNAME,
   GROOM_INFO,
-  GROOM_FATHER,
   GROOM_MOTHER,
   GROOM_TITLE,
   BRIDE_TITLE,
@@ -18,11 +17,6 @@ import PhoneIcon from "../../icons/phone-flip-icon.svg?react"
 import EnvelopeIcon from "../../icons/envelope-icon.svg?react"
 import { useState } from "react"
 
-/**
- * 초대 메시지와 혼주 정보, 연락하기 기능을 제공하는 컴포넌트입니다.
- *
- * @returns {JSX.Element} 모시는 글 섹션
- */
 export const Invitation = () => {
   const contactModalState = useState(false)
   return (
@@ -31,9 +25,9 @@ export const Invitation = () => {
         <h2 className="english">Invitation</h2>
 
         <div className="break" />
-
+        
         {/* 초대 문구 */}
-        <div className="content">깊어가는 가을의 끝자락에서</div>
+        <div className="content">가을의 끝자락, 겨울이 시작되는 길목에서</div>
         <div className="content">저희 두 사람이 새로운 시작을 함께하려 합니다.</div>
         <div className="break" />
         <div className="content">예식은 양가 가족분들만 모시고</div>
@@ -96,7 +90,12 @@ export const Invitation = () => {
               ({ relation, name, phone }) => (
                 <Fragment key={relation}>
                   <div className="relation">{relation}</div>
-                  <div>{name}</div>
+                  <div>
+                    <div>{name}</div>
+                    <div style={{ fontSize: "0.85rem", opacity: 0.75, marginTop: "0.15rem" }}>
+                      {phone}
+                    </div>
+                  </div>
                   <div>
                     {/* 전화 걸기 */}
                     <PhoneIcon
@@ -123,7 +122,12 @@ export const Invitation = () => {
               ({ relation, name, phone }) => (
                 <Fragment key={relation}>
                   <div className="relation">{relation}</div>
-                  <div>{name}</div>
+                  <div>
+                    <div>{name}</div>
+                    <div style={{ fontSize: "0.85rem", opacity: 0.75, marginTop: "0.15rem" }}>
+                      {phone}
+                    </div>
+                  </div>
                   <div>
                     <PhoneIcon
                       className="flip icon"

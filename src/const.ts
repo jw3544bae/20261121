@@ -31,7 +31,7 @@ export const HOLIDAYS = []
 /**
  * 예식 장소 명칭
  */
-export const LOCATION = "라벨라 쿠치나"
+export const LOCATION = "가족식(라벨라 쿠치나)"
 export const LOCATION_ADDRESS = "대구광역시 수성구 무학로 151 (지산동 1063-1)"
 
 /**

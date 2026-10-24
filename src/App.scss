@@ -11,16 +11,16 @@
 @use "./component/shareButton";
 
 :root {
-  --theme-color: #ff8585;
-  --theme-bg-color: #ffe7e7;
-  --alt-color: #c28080;
-  --alt-bg-color: #f4f0f0;
-  --dark-color: #282c34;
-  --dark-grey-color: #d2d2d2;
-  --light-grey-color: #eaeaea;
-  --light-color: #f9f9f9;
+  --theme-color: #7a6a5e;      /* 포인트/제목: 따뜻한 다크 브라운 & 토프 */
+  --theme-bg-color: #dfd9d2;   /* 바깥 배경: 하얀 눈이 가장 잘 보이는 캐시미어 베이지 */
+  --alt-color: #9c8c80;        /* 보조 포인트 색상 */
+  --alt-bg-color: #f2efeb;     /* 내부 박스(계좌/안내 등) 배경색 */
+  --dark-color: #2e2a27;       /* 기본 본문 글씨색 (부드러운 딥 브라운) */
+  --dark-grey-color: #c8c2bc;
+  --light-grey-color: #e3ded8; /* 카드 테두리선 */
+  --light-color: #faf8f5;      /* 청첩장 종이 배경색 (따뜻한 스노우 화이트) */
   --white-color: #ffffff;
-  --red-color: #ff0000;
+  --red-color: #b84a4a;        /* 달력 일요일/공휴일 표시용 차분한 레드 */
 
   font-family: "MapoGoldenPier";
   font-size: 20px;
@@ -28,7 +28,6 @@
     font-size: 4vw;
   }
 }
-
 @media print {
   body {
     print-color-adjust: exact;

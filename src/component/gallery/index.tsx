@@ -1,445 +1,167 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import ArrowLeft from "../../icons/angle-left-sm.svg?react"
+import { useState, useEffect, useRef } from "react"
 import { LazyDiv } from "../lazyDiv"
-import { Button } from "../button"
-import { Modal } from "../modal"
 import { GALLERY_IMAGES } from "../../images"
 
-/**
- * 캐러셀 아이템 요소 생성
- */
-const CAROUSEL_ITEMS = GALLERY_IMAGES.map((item, idx) => (
-  <div className="carousel-item" key={idx}>
-    <img src={item} draggable={false} alt={`${idx}`} />
-  </div>
-))
-
-// 드래그 감도 설정
-const DRAG_SENSITIVITY = 15
-
-/**
- * 캐러셀 상태 타입 정의
- */
-type Status =
-  | "stationary"
-  | "clicked"
-  | "clickCanceled"
-  | "dragging"
-  | "dragEnding"
-  | "moving-left"
-  | "moving-right"
-
-/**
- * 드래그 옵션 타입 정의
- */
-type DragOption = {
-  startingClientX: number
-  startingClientY: number
-  currentTranslateX: number
-}
-
-type ClickMove = "left" | "right" | null
-
-/**
- * 갤러리 컴포넌트입니다.
- * 사진 캐러셀 기능과 전체 사진 보기 모달 기능을 제공합니다.
- * 터치 및 마우스 드래그를 지원합니다.
- *
- * @returns {JSX.Element} 갤러리 섹션
- */
 export const Gallery = () => {
-  const modalState = useState(false)
-  const carouselRef = useRef<HTMLDivElement>({} as HTMLDivElement)
+  // 현재 확대해서 보고 있는 사진의 인덱스 (null이면 닫힘)
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
 
+  // 모바일 터치 스와이프 좌표 및 애니메이션 오프셋 관리
+  const touchStartX = useRef<number | null>(null)
+  const touchEndX = useRef<number | null>(null)
+  const [dragOffset, setDragOffset] = useState(0)
+
+  // 이전 사진으로 이동
+  const handlePrev = () => {
+    setSelectedIndex((prev) =>
+      prev !== null
+        ? (prev - 1 + GALLERY_IMAGES.length) % GALLERY_IMAGES.length
+        : null,
+    )
+  }
+
+  // 다음 사진으로 이동
+  const handleNext = () => {
+    setSelectedIndex((prev) =>
+      prev !== null ? (prev + 1) % GALLERY_IMAGES.length : null,
+    )
+  }
+
+  // 모달이 열려 있을 때 배경 스크롤 방지 및 PC 키보드 좌우 화살표 지원
   useEffect(() => {
-    // 이미지 프리로드 (Preload)
-    GALLERY_IMAGES.forEach((image) => {
-      const img = new Image()
-      img.src = image
-    })
-  }, [])
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (selectedIndex === null) return
+      if (e.key === "ArrowLeft") handlePrev()
+      if (e.key === "ArrowRight") handleNext()
+      if (e.key === "Escape") setSelectedIndex(null)
+    }
 
-  // 슬라이드 인덱스 상태
-  const [slide, _setSlide] = useState(0)
-  const slideRef = useRef(0)
-  const setSlide = (slide: number) => {
-    _setSlide(slide)
-    slideRef.current = slide
-  }
-
-  // 캐러셀 동작 상태
-  const [status, _setStatus] = useState<Status>("stationary")
-  const statusRef = useRef<Status>("stationary")
-  const setStatus = (status: Status) => {
-    _setStatus(status)
-    statusRef.current = status
-  }
-
-  // 드래그 정보 상태
-  const [dragOption, _setDragOption] = useState<DragOption>({
-    startingClientX: 0,
-    startingClientY: 0,
-    currentTranslateX: 0,
-  })
-  const dragOptionRef = useRef<DragOption>({
-    startingClientX: 0,
-    startingClientY: 0,
-    currentTranslateX: 0,
-  })
-  const setDragOption = (dragOption: DragOption) => {
-    _setDragOption(dragOption)
-    dragOptionRef.current = dragOption
-  }
-
-  const [moveOption, setMoveOption] = useState({
-    srcIdx: 0,
-    dstIdx: 0,
-  })
-
-  const clickMoveRef = useRef<ClickMove>(null)
-  const setClickMove = (clickMove: ClickMove) => {
-    clickMoveRef.current = clickMove
-  }
-
-  /**
-   * 마우스/터치 다운 이벤트 처리
-   */
-  const click = (
-    status: Status,
-    clientX: number,
-    clientY: number,
-    carouselWidth: number,
-  ) => {
-    if (status !== "stationary") return
-    setDragOption({
-      startingClientX: clientX,
-      startingClientY: clientY,
-      currentTranslateX: -carouselWidth,
-    })
-    setStatus("clicked")
-  }
-
-  /**
-   * 드래그 중 처리
-   */
-  const dragging = useCallback(
-    (dragOption: DragOption, clientX: number, carouselWidth: number) => {
-      let moveTranslateX = clientX - dragOption.startingClientX
-
-      // 드래그 범위 제한
-      if (moveTranslateX > carouselWidth) {
-        moveTranslateX = carouselWidth
-      } else if (moveTranslateX < -carouselWidth) {
-        moveTranslateX = -carouselWidth
-      }
-
-      setDragOption({
-        ...dragOption,
-        currentTranslateX: moveTranslateX - carouselWidth,
-      })
-    },
-    [],
-  )
-
-  /**
-   * 드래그 종료 시 슬라이드 이동 결정 및 애니메이션 처리
-   */
-  const dragEnd = useCallback(
-    (slide: number, dragOption: DragOption, carouselWidth: number) => {
-      let move = 0
-      // 10% 이상 드래그했을 때 다음/이전 슬라이드로 이동
-      if (dragOption.currentTranslateX < -carouselWidth * 1.1) {
-        move = 1
-      } else if (dragOption.currentTranslateX > -carouselWidth * 0.9) {
-        move = -1
-      }
-
-      setDragOption({
-        ...dragOption,
-        currentTranslateX: -carouselWidth * (move + 1),
-      })
-
-      setStatus("dragEnding")
-
-      setTimeout(() => {
-        setDragOption({
-          ...dragOption,
-          currentTranslateX: -carouselWidth,
-        })
-        setStatus("stationary")
-        setSlide((slide + move + CAROUSEL_ITEMS.length) % CAROUSEL_ITEMS.length)
-      }, 300)
-    },
-    [],
-  )
-
-  /**
-   * 버튼 클릭 등에 의한 슬라이드 이동 처리
-   */
-  const move = useCallback((srcIdx: number, dstIdx: number) => {
-    setSlide(dstIdx)
-    if (srcIdx < dstIdx) {
-      setStatus("moving-right")
+    if (selectedIndex !== null) {
+      document.body.classList.add("modal-open")
+      window.addEventListener("keydown", handleKeyDown)
     } else {
-      setStatus("moving-left")
+      document.body.classList.remove("modal-open")
     }
 
-    setMoveOption({ srcIdx, dstIdx })
-
-    setTimeout(() => {
-      setClickMove(null)
-      setStatus("stationary")
-    }, 300)
-  }, [])
-
-  /* 이벤트 핸들러 */
-  const onMouseMove = useCallback(
-    (e: MouseEvent) => {
-      const status = statusRef.current
-
-      if (status === "clicked") {
-        setStatus("dragging")
-      } else if (status === "dragging") {
-        e.preventDefault()
-        dragging(
-          dragOptionRef.current,
-          e.clientX,
-          carouselRef.current.clientWidth,
-        )
-      }
-    },
-    [dragging],
-  )
-
-  const onTouchMove = useCallback(
-    (e: TouchEvent) => {
-      const status = statusRef.current
-
-      if (status === "clicked") {
-        e.preventDefault()
-        const xMove =
-          e.targetTouches[0].clientX - dragOptionRef.current.startingClientX
-        const yMove =
-          e.targetTouches[0].clientY - dragOptionRef.current.startingClientY
-        // 일정 거리 이상 움직였을 때만 드래그로 간주
-        if (Math.abs(xMove) > DRAG_SENSITIVITY) {
-          setStatus("dragging")
-        } else if (Math.abs(yMove) > DRAG_SENSITIVITY) {
-          setStatus("clickCanceled")
-        }
-      } else if (status === "dragging") {
-        e.preventDefault()
-        dragging(
-          dragOptionRef.current,
-          e.targetTouches[0].clientX,
-          carouselRef.current.clientWidth,
-        )
-      }
-    },
-    [dragging],
-  )
-
-  const onMouseTouchUp = useCallback(() => {
-    const status = statusRef.current
-    const clickMove = clickMoveRef.current
-    const slide = slideRef.current
-
-    if (status === "clicked") {
-      if (clickMove === "left") {
-        move(slide, (slide + CAROUSEL_ITEMS.length - 1) % CAROUSEL_ITEMS.length)
-      } else if (clickMove === "right") {
-        move(slide, (slide + 1) % CAROUSEL_ITEMS.length)
-      } else {
-        setStatus("stationary")
-      }
-    } else if (status === "dragging") {
-      dragEnd(slide, dragOptionRef.current, carouselRef.current.clientWidth)
-    } else if (status === "clickCanceled") {
-      setStatus("stationary")
-    }
-  }, [dragEnd, move])
-
-  useEffect(() => {
-    const carouselElement = carouselRef.current
-
-    window.addEventListener("mousemove", onMouseMove)
-    carouselElement.addEventListener("touchmove", onTouchMove)
-    window.addEventListener("mouseup", onMouseTouchUp)
-    window.addEventListener("touchend", onMouseTouchUp)
     return () => {
-      window.removeEventListener("mousemove", onMouseMove)
-      carouselElement.removeEventListener("touchmove", onTouchMove)
-      window.removeEventListener("mouseup", onMouseTouchUp)
-      window.removeEventListener("touchend", onMouseTouchUp)
+      document.body.classList.remove("modal-open")
+      window.removeEventListener("keydown", handleKeyDown)
     }
-  }, [onMouseMove, onTouchMove, onMouseTouchUp])
+  }, [selectedIndex])
 
-  /**
-   * 인디케이터 클릭 시 해당 슬라이드로 이동
-   */
-  const onIndicatorClick = useCallback(
-    (status: Status, srcIdx: number, dstIdx: number) => {
-      if (status !== "stationary" || srcIdx === dstIdx) return
-      move(srcIdx, dstIdx)
-    },
-    [move],
-  )
+  // 모바일 손가락 터치 시작
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.targetTouches[0].clientX
+    touchEndX.current = null
+  }
 
-  const transformStyle = useMemo(() => {
-    switch (status) {
-      case "dragging":
-      case "dragEnding":
-        return { transform: `translateX(${dragOption.currentTranslateX}px)` }
-      default:
-        return {}
+  // 모바일 손가락 드래그 중 (손가락 따라 사진이 살짝 움직이는 효과)
+  const onTouchMove = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return
+    const currentX = e.targetTouches[0].clientX
+    touchEndX.current = currentX
+    setDragOffset(currentX - touchStartX.current)
+  }
+
+  // 모바일 손가락 뗐을 때 (50px 이상 밀었으면 다음/이전 사진으로 전환)
+  const onTouchEnd = () => {
+    if (touchStartX.current !== null && touchEndX.current !== null) {
+      const distance = touchStartX.current - touchEndX.current
+      const minSwipeDistance = 50
+
+      if (distance > minSwipeDistance) {
+        handleNext() // 왼쪽으로 밀었을 때 -> 다음 사진
+      } else if (distance < -minSwipeDistance) {
+        handlePrev() // 오른쪽으로 밀었을 때 -> 이전 사진
+      }
     }
-  }, [status, dragOption])
-
-  const transformClass = useMemo(() => {
-    const className = "carousel-list"
-    switch (status) {
-      case "dragEnding":
-        return className + " transitioning"
-      case "moving-left":
-        return className + " moving-left"
-      case "moving-right":
-        return className + " moving-right"
-      default:
-        return className
-    }
-  }, [status])
+    touchStartX.current = null
+    touchEndX.current = null
+    setDragOffset(0)
+  }
 
   return (
-    <>
-      <LazyDiv className="card gallery">
-        <h2 className="english">Gallery</h2>
-        <div className="carousel-wrapper">
+    <LazyDiv className="card gallery">
+      <h2 className="english">Gallery</h2>
+      <div className="break" />
+
+      {/* 1. 사진 전체가 한눈에 주르륵 보이는 그리드 영역 */}
+      <div className="gallery-grid">
+        {GALLERY_IMAGES.map((img, idx) => (
           <div
-            className="carousel"
-            ref={carouselRef}
-            onMouseDown={(e) =>
-              click(
-                statusRef.current,
-                e.clientX,
-                e.clientY,
-                e.currentTarget.clientWidth,
-              )
-            }
-            onTouchStart={(e) =>
-              click(
-                statusRef.current,
-                e.targetTouches[0].clientX,
-                e.targetTouches[0].clientY,
-                e.currentTarget.clientWidth,
-              )
-            }
+            key={idx}
+            className="grid-item"
+            onClick={() => setSelectedIndex(idx)}
           >
-            <div className={transformClass} style={transformStyle}>
-              {/* 무한 캐러셀을 위한 슬라이드 구성 */}
-              {["dragging", "dragEnding"].includes(status) && [
-                ...(slide === 0
-                  ? [CAROUSEL_ITEMS[CAROUSEL_ITEMS.length - 1]]
-                  : []),
-                ...CAROUSEL_ITEMS.slice(slide === 0 ? 0 : slide - 1, slide + 2),
-                ...(slide === CAROUSEL_ITEMS.length - 1
-                  ? [CAROUSEL_ITEMS[0]]
-                  : []),
-              ]}
-              {status === "moving-right" &&
-                CAROUSEL_ITEMS.slice(moveOption.srcIdx, moveOption.dstIdx + 1)}
-              {status === "moving-left" &&
-                CAROUSEL_ITEMS.slice(moveOption.dstIdx, moveOption.srcIdx + 1)}
-              {["stationary", "clicked", "clickCanceled"].includes(status) &&
-                CAROUSEL_ITEMS[slide]}
-            </div>
+            <img src={img} alt={`웨딩 사진 ${idx + 1}`} draggable={false} />
+          </div>
+        ))}
+      </div>
 
-            {/* 좌우 화살표 컨트롤 */}
-            <div className="carousel-control">
-              <div
-                className="control left"
-                onMouseDown={() => {
-                  if (statusRef.current === "stationary") setClickMove("left")
-                }}
-                onTouchStart={() => {
-                  if (statusRef.current === "stationary") setClickMove("left")
-                }}
-              >
-                <ArrowLeft className="arrow" />
-              </div>
-              <div
-                className="control right"
-                onMouseDown={() => {
-                  if (statusRef.current === "stationary") setClickMove("right")
-                }}
-                onTouchStart={() => {
-                  if (statusRef.current === "stationary") setClickMove("right")
-                }}
-              >
-                <ArrowLeft className="arrow right" />
-              </div>
-            </div>
+      {/* 2. 클릭 시 확대되고 손으로 넘기는 전체화면 슬라이드 모달 */}
+      {selectedIndex !== null && (
+        <div
+          className="gallery-lightbox"
+          onClick={() => setSelectedIndex(null)}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+        >
+          {/* 상단 현재 페이지 표시 및 닫기(X) 버튼 */}
+          <div className="lightbox-header" onClick={(e) => e.stopPropagation()}>
+            <span className="lightbox-counter">
+              {selectedIndex + 1} / {GALLERY_IMAGES.length}
+            </span>
+            <button
+              className="lightbox-close"
+              onClick={() => setSelectedIndex(null)}
+              aria-label="닫기"
+            >
+              ✕
+            </button>
           </div>
 
-          {/* 하단 인디케이터 (점) */}
-          <div className="carousel-indicator">
-            {CAROUSEL_ITEMS.map((_, idx) => (
-              <button
-                key={idx}
-                className={`indicator${idx === slide ? " active" : ""}`}
-                onClick={() =>
-                  onIndicatorClick(statusRef.current, slideRef.current, idx)
-                }
-              />
-            ))}
-          </div>
-        </div>
-
-        <div className="break" />
-
-        <Button onClick={() => modalState[1](true)}>사진 전체보기</Button>
-      </LazyDiv>
-
-      {/* 사진 전체보기 모달 */}
-      <Modal
-        modalState={modalState}
-        className="all-photo-modal"
-        closeOnClickBackground={true}
-      >
-        <div className="header">
-          <div className="title">사진 전체보기</div>
-        </div>
-
-        <div className="content">
-          <div className="photo-list">
-            {GALLERY_IMAGES.map((image, idx) => (
-              <img
-                key={idx}
-                src={image}
-                alt={`${idx}`}
-                draggable={false}
-                onClick={() => {
-                  if (statusRef.current === "stationary") {
-                    if (idx !== slideRef.current) {
-                      move(slideRef.current, idx)
-                    }
-                    modalState[1](false)
-                  }
-                }}
-              />
-            ))}
-          </div>
-          <div className="break" />
-        </div>
-        <div className="footer">
-          <Button
-            buttonStyle="style2"
-            className="bg-light-grey-color text-dark-color"
-            onClick={() => modalState[1](false)}
+          {/* 좌측 화살표 버튼 */}
+          <button
+            className="lightbox-nav prev"
+            onClick={(e) => {
+              e.stopPropagation()
+              handlePrev()
+            }}
+            aria-label="이전 사진"
           >
-            닫기
-          </Button>
+            ‹
+          </button>
+
+          {/* 확대된 이미지 본문 */}
+          <div
+            className="lightbox-content"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              transform: `translateX(${dragOffset}px)`,
+              transition: dragOffset === 0 ? "transform 0.25s ease-out" : "none",
+            }}
+          >
+            <img
+              src={GALLERY_IMAGES[selectedIndex]}
+              alt={`확대된 웨딩 사진 ${selectedIndex + 1}`}
+              draggable={false}
+            />
+          </div>
+
+          {/* 우측 화살표 버튼 */}
+          <button
+            className="lightbox-nav next"
+            onClick={(e) => {
+              e.stopPropagation()
+              handleNext()
+            }}
+            aria-label="다음 사진"
+          >
+            ›
+          </button>
         </div>
-      </Modal>
-    </>
+      )}
+    </LazyDiv>
   )
 }
