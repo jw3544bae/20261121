@@ -46,8 +46,8 @@ export const ShareButton = () => {
               imageUrl: shareImageUrl,
               // 👇 이 두 값이 없으면 카카오톡이 2:1 가로형으로 강제 확대 크롭합니다!
               // 800 x 800 (정사각형) 또는 800 x 400 (가로형) 등 실제 준비한 이미지 비율에 맞춰 지정하세요.
-              imageWidth: 500,
-              imageHeight: 557,
+              imageWidth: 1000,
+              imageHeight: 500,
               link: {
                 mobileWebUrl: siteUrl,
                 webUrl: siteUrl,
