@@ -32,7 +32,7 @@ export const ShareButton = () => {
           const isFriends = window.location.search.includes("to=friends")
           const siteUrl = origin + cleanBaseUrl + "/" + (isFriends ? "?to=friends" : "")
           
-          const shareImageUrl = origin + cleanBaseUrl + "/preview_image3.png"
+          const shareImageUrl = origin + cleanBaseUrl + "/preview_image4.png"
 
           const shareTitle = isFriends
             ? `${GROOM_FULLNAME} ❤️ ${BRIDE_FULLNAME}의 친구 모임 식사에 초대합니다.`
