@@ -51,7 +51,7 @@ export const ShareButton = () => {
               title: shareTitle,
               description: shareDescription,
               imageUrl: shareImageUrl,
-              imageWidth: 1000,
+              imageWidth: 900,
               imageHeight: 500,
               link: {
                 mobileWebUrl: siteUrl,
