@@ -7,25 +7,6 @@ import { Modal } from "../modal"
 import { AttendanceInfo } from "./attendance"
 
 /**
- * 식사 정보 안내 컴포넌트입니다.
- */
-export const Information1 = () => {
-  return (
-    <>
-      <h2 className="english">Information</h2>
-      <div className="info-card">
-        <div className="label">식사 안내</div>
-        <div className="content">
-          식사시간: 12시 30분
-          <br />
-          장소: 라벨라 쿠치나
-        </div>
-      </div>
-    </>
-  )
-}
-
-/**
  * 축의금 계좌번호 안내 컴포넌트입니다.
  * 신랑측, 신부측 계좌번호를 모달로 보여줍니다.
  */
@@ -35,7 +16,8 @@ export const Information2 = () => {
 
   return (
     <>
-        <div className="info-card">
+      <h2 className="english">Information</h2>
+      <div className="info-card">
         <div className="label">마음 전하기</div>
         <div className="content">
           가족들과 작게 올리는 예식이라
@@ -126,7 +108,7 @@ export const Information2 = () => {
 }
 
 /**
- * 정보 안내(식사, 축의금, 참석의사)를 통합하여 표시하는 컴포넌트입니다.
+ * 정보 안내(축의금, 참석의사)를 표시하는 컴포넌트입니다.
  *
  * @returns {JSX.Element} 정보 안내 섹션
  */
@@ -134,20 +116,14 @@ export const Information = () => {
   // 정적 모드일 경우 참석 의사 전달 기능을 제외합니다.
   if (STATIC_ONLY) {
     return (
-      <>
-        <LazyDiv className="card information">
-          <Information1 />
-        </LazyDiv>
-        <LazyDiv className="card information">
-          <Information2 />
-        </LazyDiv>
-      </>
+      <LazyDiv className="card information">
+        <Information2 />
+      </LazyDiv>
     )
   }
 
   return (
     <LazyDiv className="card information">
-      <Information1 />
       <Information2 />
       <AttendanceInfo />
     </LazyDiv>

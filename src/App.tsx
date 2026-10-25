@@ -1,3 +1,4 @@
+import { useMemo } from "react"
 import { Cover } from "./component/cover"
 import { Location } from "./component/location"
 import "./App.scss"
@@ -6,53 +7,70 @@ import { Invitation } from "./component/invitation"
 import { Calendar } from "./component/calendar"
 import { Gallery } from "./component/gallery"
 import { Information } from "./component/information"
-// import { GuestBook } from "./component/guestbook"
 import { LazyDiv } from "./component/lazyDiv"
 import { ShareButton } from "./component/shareButton"
-import { STATIC_ONLY } from "./env"
+import {
+  FriendsInvitationMain,
+  FriendsInvitationSub,
+  FriendsDonation,
+} from "./component/friendsInvitation"
 
 /**
  * 메인 애플리케이션 컴포넌트입니다.
- * 초대장의 각 섹션을 조합하여 화면을 구성합니다.
- *
- * @returns {JSX.Element} 애플리케이션 화면
+ * URL에 ?to=friends 가 있으면 본식 내용 + 친구 식사 초대장을, 없으면 본식 청첩장을 보여줍니다.
  */
 function App() {
+  // 브라우저 주소창의 ?to=friends 쿼리스트링 확인
+  const isFriendsPage = useMemo(() => {
+    const params = new URLSearchParams(window.location.search)
+    return params.get("to") === "friends"
+  }, [])
+
   return (
     <div className="background">
-      {/* 배경 애니메이션 효과 (예: 꽃잎 내리기) */}
+      {/* 눈 내리는 배경 효과 */}
       <BGEffect />
+      
       <div className="card-view">
+        {/* 공통 상단 영역: 커버, 본식 안내, 달력, 웨딩 촬영 사진 갤러리 */}
         <LazyDiv className="card-group">
-          {/* 메인 커버 섹션 */}
           <Cover />
-
-          {/* 모시는 글 섹션 */}
           <Invitation />
         </LazyDiv>
 
         <LazyDiv className="card-group">
-          {/* 결혼식 날짜 및 달력 섹션 */}
           <Calendar />
-
-          {/* 사진 갤러리 섹션 */}
           <Gallery />
         </LazyDiv>
 
-        <LazyDiv className="card-group">
-          {/* 오시는 길 및 지도 섹션 */}
-          <Location />
-        </LazyDiv>
+        {isFriendsPage ? (
+          /* 1. 친구 전용 모임 안내 및 계좌 안내 (?to=friends 로 접속 시) */
+          <>
+            {/* 카드 그룹 1: 초대 편지 & 룸/참석 안내 (2단 구성) */}
+            <LazyDiv className="card-group">
+              <FriendsInvitationMain />
+              <FriendsInvitationSub />
+            </LazyDiv>
 
-        <LazyDiv className="card-group">
-          {/* 축의금 및 연락처 정보 섹션 */}
-          <Information />
-          {/* 방명록 섹션 (정적 모드가 아닐 때만 표시) */}
-          {!STATIC_ONLY}
-        </LazyDiv>
+            {/* 카드 그룹 2: 마음 전하기 (단독 카드) */}
+            <LazyDiv className="card-group">
+              <FriendsDonation />
+            </LazyDiv>
 
-        {/* 카카오톡/링크 공유 버튼 */}
-        <ShareButton />
+            <ShareButton />
+          </>
+        ) : (
+          /* 2. 일반 본식 청첩장 전체 화면 */
+          <>
+            {/* 카드 그룹 3: 왼쪽 Location (지도+교통+식사 통합) & 오른쪽 Information (마음 전하기 & 참석의사) */}
+            <LazyDiv className="card-group">
+              <Location />
+              <Information />
+            </LazyDiv>
+
+            <ShareButton />
+          </>
+        )}
       </div>
     </div>
   )

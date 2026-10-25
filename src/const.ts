@@ -14,7 +14,7 @@ export { dayjs }
  * 예식 일시 설정
  * Asia/Seoul 타임존 기준으로 설정합니다.
  */
-export const WEDDING_DATE = dayjs.tz("2026-11-21 12:00", "Asia/Seoul")
+export const WEDDING_DATE = dayjs.tz("2026-11-21 12:30", "Asia/Seoul")
 /**
  * 예식 일시 포맷
  * 분이 0이면 분을 생략하고, 그 외에는 표시합니다.
@@ -117,3 +117,28 @@ export const GROOM_INFO = [
     account: "신협은행 1321-3821-2811",
   },
 ]
+
+export const FRIEND_EVENT = {
+  TITLE: "친구들과 함께하는 축하 식사 자리",
+  DATE: "2026년 12월 12일 (토) 오전 11:30",
+  LOCATION: "더뷔페 앳 인터불고",
+  ADDRESS: "대구 수성구 팔현길 212 호텔인터불고 (만촌동 57-23)",
+  PIN: [128.65988047416133, 35.87441338270292] as [number, number],
+  NAVER_PLACE_ID: 31949443,
+  KAKAO_PLACE_ID: 183831186,
+  NAVER_MAP_URL: "https://map.naver.com/p/entry/place/31949443",
+  KAKAO_MAP_URL: "https://place.map.kakao.com/183831186",
+  SUBWAY: [
+    "동대구역(KTX/SRT) / 복합환승센터에서 택시 이용 시 약 10~15분",
+    "지하철 1호선 아양교역(1번 출구) 또는 2호선 만촌역(1번 출구) 하차 후 시내버스 또는 택시 환승",
+  ],
+  BUS: [
+    "호텔인터불고 또는 망우당공원 정류장 하차",
+    "- 간선(파랑): 106, 518, 651, 708, 814",
+    "- 지선(초록): 동구1-1, 수성2",
+  ],
+  PARKING: [
+    "네비게이션 '호텔인터불고 대구 본관' 또는 '더뷔페 앳 인터불고' 검색",
+    "호텔 인터불고 본관 전용 주차장 무료 이용 가능 (주차권 필요 시 카운터 문의)",
+  ],
+}
