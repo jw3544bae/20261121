@@ -32,7 +32,7 @@ export const ShareButton = () => {
           
           // 카카오톡 공유 전용 이미지 경로
           // (public 폴더에 새로 만든 kakao_thumb.png 또는 preview_image.png 지정)
-          const shareImageUrl = origin + cleanBaseUrl + "/preview_image.png"
+          const shareImageUrl = origin + cleanBaseUrl + "/preview_image2.png"
 
           // 카카오톡 공유 전송 (위치 기반 템플릿)
           kakao.Share.sendDefault({
