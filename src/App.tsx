@@ -17,14 +17,19 @@ import {
 
 /**
  * 메인 애플리케이션 컴포넌트입니다.
- * URL에 ?to=friends 가 있으면 본식 내용 + 친구 식사 초대장을, 없으면 본식 청첩장을 보여줍니다.
+ * URL에 ?to=friends 가 있으면 본식 내용 + 친구 식사 초대장을,
+ * ?to=company 가 있으면 본식 내용 중 위치 정보를 제외한 초대장을,
+ * 없으면 일반 본식 청첩장을 보여줍니다.
  */
 function App() {
-  // 브라우저 주소창의 ?to=friends 쿼리스트링 확인
-  const isFriendsPage = useMemo(() => {
+  // 브라우저 주소창의 쿼리스트링 확인
+  const target = useMemo(() => {
     const params = new URLSearchParams(window.location.search)
-    return params.get("to") === "friends"
+    return params.get("to")
   }, [])
+
+  const isFriendsPage = target === "friends"
+  const isCompanyPage = target === "company"
 
   return (
     <div className="background">
@@ -59,8 +64,17 @@ function App() {
 
             <ShareButton />
           </>
+        ) : isCompanyPage ? (
+          /* 2. 직장 동료 전용 (?to=company 로 접속 시, Location 제외) */
+          <>
+            <LazyDiv className="card-group">
+              <Information />
+            </LazyDiv>
+
+            <ShareButton />
+          </>
         ) : (
-          /* 2. 일반 본식 청첩장 전체 화면 */
+          /* 3. 일반 본식 청첩장 전체 화면 */
           <>
             {/* 카드 그룹 3: 왼쪽 Location (지도+교통+식사 통합) & 오른쪽 Information (마음 전하기 & 참석의사) */}
             <LazyDiv className="card-group">

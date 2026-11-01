@@ -1,3 +1,4 @@
+import { useMemo } from "react"
 import {
   BRIDE_FULLNAME,
   GROOM_FULLNAME,
@@ -19,6 +20,14 @@ const cleanBaseUrl = rawBaseUrl.endsWith("/") ? rawBaseUrl.slice(0, -1) : rawBas
 export const ShareButton = () => {
   const kakao = useKakao()
 
+  const target = useMemo(() => {
+    const params = new URLSearchParams(window.location.search)
+    return params.get("to")
+  }, [])
+
+  const isFriends = target === "friends"
+  const isCompany = target === "company"
+
   return (
     <LazyDiv className="footer share-button">
       <button
@@ -29,8 +38,7 @@ export const ShareButton = () => {
           }
 
           const origin = window.location.protocol + "//" + window.location.host
-          const isFriends = window.location.search.includes("to=friends")
-          const siteUrl = origin + cleanBaseUrl + "/" + (isFriends ? "?to=friends" : "")
+          const siteUrl = origin + cleanBaseUrl + "/" + (target ? `?to=${target}` : "")
           
           const shareImageUrl = origin + cleanBaseUrl + "/preview_image4.png"
 
@@ -70,7 +78,12 @@ export const ShareButton = () => {
           })
         }}
       >
-        <img src={ktalkIcon} alt="ktalk-icon" /> {window.location.search.includes("to=friends") ? "친구 초대장 공유하기" : "카카오톡으로 공유하기"}
+        <img src={ktalkIcon} alt="ktalk-icon" />{" "}
+        {isFriends
+          ? "친구 초대장 공유하기"
+          : isCompany
+            ? "동료 초대장 공유하기"
+            : "카카오톡으로 공유하기"}
       </button>
     </LazyDiv>
   )
